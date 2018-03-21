@@ -27,7 +27,10 @@
   }
 
   function disconnect() {
-    if (stompClient) stompClient.disconnect();
+    if (stompClient) {
+      stompClient.disconnect();
+      stompClient = null;
+    }
     setConnected(false);
   }
 
