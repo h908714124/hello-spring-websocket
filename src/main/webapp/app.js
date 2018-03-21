@@ -1,7 +1,7 @@
 (function () {
   "use strict";
 
-  var stompClient = null;
+  var stompClient;
 
   function setConnected(connected) {
     $('#connect').prop('disabled', connected);
@@ -15,7 +15,10 @@
   }
 
   function connect() {
-    if (stompClient) throw 'Already connected';
+    if (stompClient) {
+      setConnected(true);
+      return;
+    }
     var socket = new SockJS('/hello-spring-websocket');
     stompClient = Stomp.over(socket);
     stompClient.connect({}, function () {
