@@ -4,14 +4,11 @@
   var stompClient;
 
   function setConnected(connected) {
-    $('#connect').prop('disabled', connected);
-    $('#disconnect').prop('disabled', !connected);
-    if (connected) {
-      $('#conversation').show();
-    } else {
-      $('#conversation').hide();
-    }
-    $('#greetings').html('');
+    document.getElementById('connect').disabled = connected;
+    document.getElementById('disconnect').disabled = !connected;
+    document.getElementById('send').disabled = !connected;
+    document.getElementById('conversation').style.display = connected ? 'table' : 'none';
+    document.getElementById('greetings').innerHTML = '';
   }
 
   function connect() {
@@ -32,26 +29,35 @@
   function disconnect() {
     if (stompClient) {
       stompClient.disconnect();
-      stompClient = null;
+      stompClient = undefined;
     }
     setConnected(false);
   }
 
   function sendName() {
-    var data = JSON.stringify({'name': $('#name').val()});
+    if (!stompClient) {
+      return;
+    }
+    var name = document.getElementById('name').value;
+    var data = JSON.stringify({'name': name});
     stompClient.send('/app/hello', {}, data);
   }
 
   function showGreeting(message) {
-    $('#greetings').append('<tr><td>' + message + '</td></tr>');
+    document.getElementById('greetings')
+        .insertAdjacentHTML('beforeend', '<tr><td>' + message + '</td></tr>');
   }
 
-  $(function () {
-    $('form').on('submit', function (e) {
-      e.preventDefault();
-    });
-    $('#connect').click(connect);
-    $('#disconnect').click(disconnect);
-    $('#send').click(sendName);
-  });
+  (function () {
+    setConnected(false);
+    var forms = document.getElementsByTagName('form');
+    for (var i = 0; i < forms.length; ++i) {
+      forms[i].addEventListener('submit', function (e) {
+        e.preventDefault();
+      })
+    }
+    document.getElementById('connect').addEventListener('click', connect);
+    document.getElementById('disconnect').addEventListener('click', disconnect);
+    document.getElementById('send').addEventListener('click', sendName);
+  })();
 })();
