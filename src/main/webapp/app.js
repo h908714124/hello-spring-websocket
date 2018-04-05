@@ -3,61 +3,59 @@
 
   var stompClient;
 
-  function setConnected(connected) {
-    document.getElementById('connect').disabled = connected;
-    document.getElementById('disconnect').disabled = !connected;
-    document.getElementById('send').disabled = !connected;
-    document.getElementById('conversation').style.display = connected ? 'table' : 'none';
-    document.getElementById('greetings').innerHTML = '';
-  }
+  var ar = [];
 
-  function connect() {
-    if (stompClient) {
-      setConnected(true);
-      return;
+  new Vue({
+
+    el: '#main-content',
+
+    data: {
+      connected: false,
+      newMessage: '',
+      messages: ar
+    },
+
+    methods: {
+
+      sendMessage: function () {
+        if (!stompClient) {
+          return;
+        }
+        var text = this.newMessage.trim();
+        var message = JSON.stringify({'text': text});
+        stompClient.send('/app/hello', {}, message);
+      },
+
+      disconnect: function () {
+        if (!stompClient) {
+          return;
+        }
+        stompClient.disconnect();
+        stompClient = undefined;
+        this.connected = false;
+        this.messages.length = 0;
+        this.newMessage = '';
+      },
+
+      connect: function () {
+        if (stompClient) {
+          return;
+        }
+        this.connected = true;
+        stompClient = createStompClient();
+      }
     }
+  });
+
+  function createStompClient() {
     var socket = new SockJS('/hello-spring-websocket');
-    stompClient = Stomp.over(socket);
+    var stompClient = Stomp.over(socket);
     stompClient.connect({}, function () {
-      setConnected(true);
-      stompClient.subscribe('/topic/greetings', function (greeting) {
-        showGreeting(JSON.parse(greeting.body).content);
+      stompClient.subscribe('/topic/greetings', function (data) {
+        var message = JSON.parse(data.body);
+        ar.push({'text': message.text});
       });
     });
+    return stompClient;
   }
-
-  function disconnect() {
-    if (stompClient) {
-      stompClient.disconnect();
-      stompClient = undefined;
-    }
-    setConnected(false);
-  }
-
-  function sendName() {
-    if (!stompClient) {
-      return;
-    }
-    var name = document.getElementById('name').value;
-    var data = JSON.stringify({'name': name});
-    stompClient.send('/app/hello', {}, data);
-  }
-
-  function showGreeting(message) {
-    document.getElementById('greetings')
-        .insertAdjacentHTML('beforeend', '<tr><td>' + message + '</td></tr>');
-  }
-
-  (function () {
-    setConnected(false);
-    var forms = document.getElementsByTagName('form');
-    for (var i = 0; i < forms.length; ++i) {
-      forms[i].addEventListener('submit', function (e) {
-        e.preventDefault();
-      })
-    }
-    document.getElementById('connect').addEventListener('click', connect);
-    document.getElementById('disconnect').addEventListener('click', disconnect);
-    document.getElementById('send').addEventListener('click', sendName);
-  })();
 })();

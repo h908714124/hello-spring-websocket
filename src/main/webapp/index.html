@@ -1,44 +1,65 @@
 <!DOCTYPE html>
+<!--suppress ALL -->
 <html>
   <head>
     <title>Hello WebSocket</title>
     <link href="/webjars/bootstrap/css/bootstrap.min.css" rel="stylesheet">
     <link href="/main.css" rel="stylesheet">
+    <style>
+      #conversation {
+        display: none
+      }
+
+      #conversation.connected {
+        display: table
+      }
+    </style>
   </head>
   <body>
     <noscript><h2>Need javascript</h2></noscript>
     <div id="main-content" class="container">
       <div class="row">
         <div class="col-md-6">
-          <form class="form-inline">
-            <div class="form-group">
-              <label for="connect">Connect?</label>
-              <button id="connect" class="btn btn-default" type="submit">Connect</button>
-              <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled">
-                Disconnect
-              </button>
-            </div>
-          </form>
+          <label for="connect">Connect?</label>
+          <button id="connect"
+            v-on:click="connect"
+            class="btn btn-default"
+            :disabled="connected"
+            type="submit">Connect
+          </button>
+          <button id="disconnect" class="btn btn-default" type="submit" disabled="disabled"
+            v-on:click="disconnect"
+            :disabled="!connected">
+            Disconnect
+          </button>
         </div>
         <div class="col-md-6">
-          <form class="form-inline">
-            <div class="form-group">
-              <label for="name">What is your name?</label>
-              <input type="text" id="name" class="form-control" placeholder="Your name here...">
-            </div>
-            <button id="send" class="btn btn-default" type="submit">Send</button>
-          </form>
+          <label for="text">What is your text?</label>
+          <input type="text" id="text"
+            v-model="newMessage" v-on:keyup.enter="sendMessage"
+            class="form-control"
+            :disabled="!connected"
+            placeholder="Your text here...">
         </div>
+        <button id="send" class="btn btn-default"
+          v-on:click="sendMessage"
+          :disabled="!connected"
+          type="submit">Send
+        </button>
       </div>
       <div class="row">
         <div class="col-md-12">
-          <table id="conversation" class="table table-striped">
+          <table id="conversation" class="table table-striped"
+            v-bind:class="{ 'connected': connected }">
             <thead>
               <tr>
                 <th>Greetings</th>
               </tr>
             </thead>
             <tbody id="greetings">
+              <tr v-for="message in messages">
+                <td>{{ message.text }}</td>
+              </tr>
             </tbody>
           </table>
         </div>
@@ -46,6 +67,7 @@
     </div>
     <script src="/webjars/sockjs-client/sockjs.min.js"></script>
     <script src="/webjars/stomp-websocket/stomp.min.js"></script>
+    <script src="/webjars/vue/vue.min.js"></script>
     <script src="/app.js"></script>
   </body>
 </html>

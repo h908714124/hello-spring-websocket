@@ -9,10 +9,9 @@ public class GreetingController {
 
   @MessageMapping("/hello")
   @SendTo("/topic/greetings")
-  public Greeting greeting(HelloMessage message) {
-    Greeting greeting = new Greeting();
-    greeting.setContent("Hello, " + message.getName() + "!");
-    return greeting;
+  public OutMessage greeting(InMessage message) {
+    OutMessage outMessage = new OutMessage();
+    outMessage.setText("Hello, " + message.getText() + "!");
+    return outMessage;
   }
 }
-

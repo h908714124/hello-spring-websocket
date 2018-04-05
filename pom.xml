@@ -28,6 +28,12 @@
 
     <dependency>
       <groupId>org.webjars</groupId>
+      <artifactId>vue</artifactId>
+      <version>2.5.13</version>
+    </dependency>
+
+    <dependency>
+      <groupId>org.webjars</groupId>
       <artifactId>sockjs-client</artifactId>
       <version>1.0.2</version>
     </dependency>
@@ -65,7 +71,7 @@
       </plugin>
 
       <!--
-      https://stackoverflow.com/questions/24762657/refreshing-static-content-with-spring-mvc-and-boot
+      https://stackoverflow.com/questions/24762657/refreshing-static-text-with-spring-mvc-and-boot
       https://stackoverflow.com/questions/18492457/enable-intellij-hotswap-of-html-and-javascript-files
       -->
       <plugin>
