@@ -70,6 +70,59 @@
         <artifactId>spring-boot-maven-plugin</artifactId>
       </plugin>
 
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>rpm-maven-plugin</artifactId>
+        <version>2.1.5</version>
+        <extensions>true</extensions>
+        <executions>
+          <execution>
+            <id>generate-rpm</id>
+            <goals>
+              <goal>rpm</goal>
+            </goals>
+          </execution>
+        </executions>
+        <configuration>
+          <postinstallScriptlet>
+            <scriptFile>src/main/bin/postinstall.sh</scriptFile>
+            <fileEncoding>utf-8</fileEncoding>
+          </postinstallScriptlet>
+          <group>hello</group>
+          <mappings>
+            <mapping>
+              <directory>/opt/hello/spring_websocket</directory>
+              <sources>
+                <source>
+                  <location>target</location>
+                  <includes>
+                    <include>*.jar</include>
+                  </includes>
+                </source>
+                <source>
+                  <location>src/main/service</location>
+                  <includes>
+                    <include>start</include>
+                  </includes>
+                </source>
+              </sources>
+            </mapping>
+            <mapping>
+              <directory>/usr/lib/systemd/system</directory>
+              <directoryIncluded>false</directoryIncluded>
+              <sources>
+                <source>
+                  <location>src/main/service</location>
+                  <includes>
+                    <include>*.service</include>
+                  </includes>
+                </source>
+              </sources>
+            </mapping>
+          </mappings>
+        </configuration>
+      </plugin>
+
       <!--
       https://stackoverflow.com/questions/24762657/refreshing-static-text-with-spring-mvc-and-boot
       https://stackoverflow.com/questions/18492457/enable-intellij-hotswap-of-html-and-javascript-files

@@ -1,0 +1,10 @@
+[Unit]
+Description = Hello Spring Websocket
+
+[Service]
+ExecStart = /opt/hello/spring_websocket/start
+Type = simple
+User = tester
+
+[Install]
+WantedBy = multi-user.target

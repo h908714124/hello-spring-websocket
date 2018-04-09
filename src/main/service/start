@@ -1,0 +1,2 @@
+#!/bin/bash
+java -jar /opt/hello/spring_websocket/hello-spring-websocket-0-SNAPSHOT.jar
