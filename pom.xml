@@ -84,10 +84,6 @@
           </execution>
         </executions>
         <configuration>
-          <postinstallScriptlet>
-            <scriptFile>src/main/bin/postinstall.sh</scriptFile>
-            <fileEncoding>utf-8</fileEncoding>
-          </postinstallScriptlet>
           <group>hello</group>
           <mappings>
             <mapping>
